@@ -1,0 +1,33 @@
+services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      # Only will build development stage from our dockerfile
+      target: development
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - .env
+    # Run a command against the development stage of the image
+    command: npm run start:dev
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+  db:
+    platform: linux/x86_64
+    image: mysql:8.0
+    container_name: nest-tmp-mysql
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: nest-db
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - nest-tmp-mysql:/var/lib/mysql
+volumes:
+  nest-tmp-mysql:
